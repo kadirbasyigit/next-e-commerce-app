@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import Lock from '@mui/icons-material/Lock';
 import { registerUser } from '@/app/firebase/auth';
 import AuthForm from './AuthForm';
+import { useRouter } from 'next/navigation';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -18,6 +19,8 @@ const validationSchema = Yup.object({
 });
 
 const UserRegistration: React.FC = () => {
+  const router = useRouter();
+
   const handleSubmit = async (values: {
     email: string;
     password: string;
@@ -26,6 +29,7 @@ const UserRegistration: React.FC = () => {
     try {
       const user = await registerUser(values.email, values.password);
       console.log('Success');
+      router.push('/');
     } catch (error) {
       console.log('Fail', error);
     }

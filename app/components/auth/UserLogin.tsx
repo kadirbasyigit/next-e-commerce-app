@@ -1,12 +1,11 @@
 'use client';
 
-import { TextField, Button, Typography, Container, Box } from '@mui/material';
-import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/app/firebase/auth';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AuthForm from './AuthForm';
+import { useRouter } from 'next/navigation';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -18,6 +17,7 @@ const validationSchema = Yup.object({
 });
 
 const UserLogin: React.FC = () => {
+  const router = useRouter();
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -26,6 +26,7 @@ const UserLogin: React.FC = () => {
         values.password
       );
       console.log('Success');
+      router.push('/');
     } catch (error) {
       console.error('Fail', error);
     }
