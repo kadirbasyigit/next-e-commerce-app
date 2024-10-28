@@ -1,11 +1,10 @@
 'use client';
 
 import * as Yup from 'yup';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/app/firebase/auth';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import AuthForm from './AuthForm';
 import { useRouter } from 'next/navigation';
+import { loginUser } from '@/app/firebase/auth';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -20,12 +19,8 @@ const UserLogin: React.FC = () => {
   const router = useRouter();
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        values.email,
-        values.password
-      );
-      console.log('Success');
+      const user = await loginUser(values.email, values.password);
+      console.log('Success', user?.uid);
       router.push('/');
     } catch (error) {
       console.error('Fail', error);
