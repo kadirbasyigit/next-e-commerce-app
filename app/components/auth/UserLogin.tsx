@@ -3,8 +3,9 @@
 import { TextField, Button, Typography, Container, Box } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import Lock from '@mui/icons-material/Lock';
-import { registerUser } from '@/app/firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/app/firebase/auth';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -13,41 +14,33 @@ const validationSchema = Yup.object({
   password: Yup.string()
     .min(6, 'Password must be at least 6 characters long')
     .required('Password is required'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), undefined], 'Passwords does not match')
-    .required('Password validation is required'),
 });
 
-const UserRegistration: React.FC = () => {
-  const handleSubmit = async (values: {
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }) => {
+const UserLogin: React.FC = () => {
+  const handleSubmit = async (values: { email: string; password: string }) => {
     try {
-      const user = await registerUser(values.email, values.password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
       console.log('Success');
     } catch (error) {
-      console.log('Fail', error);
+      console.error('Fail', error);
     }
   };
 
   return (
     <Container
       maxWidth="xs"
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-      }}
+      sx={{ height: '100vh', display: 'grid', placeItems: 'center' }}
     >
       <Box p={3} boxShadow={3} borderRadius={3}>
         <Typography variant="h5" align="center" gutterBottom>
-          <Lock fontSize="large" />
+          <LockOpenIcon fontSize="large" />
         </Typography>
         <Formik
-          initialValues={{ email: '', password: '', confirmPassword: '' }}
+          initialValues={{ email: '', password: '' }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
@@ -74,19 +67,6 @@ const UserRegistration: React.FC = () => {
                 error={touched.password && Boolean(errors.password)}
                 helperText={touched.password && errors.password}
               />
-              <Field
-                as={TextField}
-                fullWidth
-                label="Confirm Password"
-                name="confirmPassword"
-                type="password"
-                variant="outlined"
-                margin="normal"
-                error={
-                  touched.confirmPassword && Boolean(errors.confirmPassword)
-                }
-                helperText={touched.confirmPassword && errors.confirmPassword}
-              />
               <Button
                 type="submit"
                 fullWidth
@@ -94,7 +74,7 @@ const UserRegistration: React.FC = () => {
                 color="primary"
                 sx={{ mt: 2 }}
               >
-                Register
+                Login
               </Button>
             </Form>
           )}
@@ -104,4 +84,4 @@ const UserRegistration: React.FC = () => {
   );
 };
 
-export default UserRegistration;
+export default UserLogin;
