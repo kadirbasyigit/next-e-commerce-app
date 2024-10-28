@@ -19,6 +19,7 @@ export const registerUser = async (email: string, password: string) => {
     return userCredential.user;
   } catch (error) {
     console.error('Error registering user: ', error);
+    throw error;
   }
 };
 
