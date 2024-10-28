@@ -1,0 +1,72 @@
+/* reset.css */
+
+/* Box-sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Reset margins and paddings */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+li,
+figure,
+blockquote {
+  margin: 0;
+  padding: 0;
+}
+
+/* Set base font size */
+body {
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Set default list style */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Remove quotes from blockquote */
+blockquote {
+  quotes: none;
+}
+
+/* Remove default link styles */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Set image max width */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Set default table styles */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Set default input styles */
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
