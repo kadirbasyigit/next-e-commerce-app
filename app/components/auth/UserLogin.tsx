@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/app/firebase/auth';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import AuthForm from './AuthForm';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -31,56 +32,13 @@ const UserLogin: React.FC = () => {
   };
 
   return (
-    <Container
-      maxWidth="xs"
-      sx={{ height: '100vh', display: 'grid', placeItems: 'center' }}
-    >
-      <Box p={3} boxShadow={3} borderRadius={3}>
-        <Typography variant="h5" align="center" gutterBottom>
-          <LockOpenIcon fontSize="large" />
-        </Typography>
-        <Formik
-          initialValues={{ email: '', password: '' }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ errors, touched }) => (
-            <Form>
-              <Field
-                as={TextField}
-                fullWidth
-                label="E-mail"
-                name="email"
-                variant="outlined"
-                margin="normal"
-                error={touched.email && Boolean(errors.email)}
-                helperText={touched.email && errors.email}
-              />
-              <Field
-                as={TextField}
-                fullWidth
-                label="Password"
-                name="password"
-                type="password"
-                variant="outlined"
-                margin="normal"
-                error={touched.password && Boolean(errors.password)}
-                helperText={touched.password && errors.password}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                sx={{ mt: 2 }}
-              >
-                Login
-              </Button>
-            </Form>
-          )}
-        </Formik>
-      </Box>
-    </Container>
+    <AuthForm
+      icon={<LockOpenIcon fontSize="large" />}
+      title="Login"
+      onSubmit={handleSubmit}
+      validationSchema={validationSchema}
+      initialValues={{ email: '', password: '' }}
+    />
   );
 };
 
