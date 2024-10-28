@@ -3,11 +3,8 @@
 import { TextField, Button, Typography, Container, Box } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import LockOpenRoundedIcon from '@mui/icons-material/LockOpenRounded';
-import PersonIcon from '@mui/icons-material/Person';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import AssignmentInd from '@mui/icons-material/AssignmentInd';
 import Lock from '@mui/icons-material/Lock';
+import { registerUser } from '@/app/firebase/auth';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -22,12 +19,17 @@ const validationSchema = Yup.object({
 });
 
 const UserRegistration: React.FC = () => {
-  const handleSubmit = (values: {
+  const handleSubmit = async (values: {
     email: string;
     password: string;
     confirmPassword: string;
   }) => {
-    console.log(values);
+    try {
+      const user = await registerUser(values.email, values.password);
+      console.log('Success', user);
+    } catch (err) {
+      console.log('Fail');
+    }
   };
 
   return (
@@ -54,7 +56,7 @@ const UserRegistration: React.FC = () => {
               <Field
                 as={TextField}
                 fullWidth
-                label="E-posta"
+                label="E-mail"
                 name="email"
                 variant="outlined"
                 margin="normal"
@@ -64,7 +66,7 @@ const UserRegistration: React.FC = () => {
               <Field
                 as={TextField}
                 fullWidth
-                label="Şifre"
+                label="Password"
                 name="password"
                 type="password"
                 variant="outlined"
@@ -75,7 +77,7 @@ const UserRegistration: React.FC = () => {
               <Field
                 as={TextField}
                 fullWidth
-                label="Şifre Doğrulama"
+                label="Confirm Password"
                 name="confirmPassword"
                 type="password"
                 variant="outlined"

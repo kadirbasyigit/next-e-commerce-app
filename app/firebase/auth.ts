@@ -1,8 +1,12 @@
 'use client';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import { app } from './firebaseConfig';
 
-const auth = getAuth();
+const auth = getAuth(app);
 
 // ** register function **
 export const registerUser = async (email: string, password: string) => {
