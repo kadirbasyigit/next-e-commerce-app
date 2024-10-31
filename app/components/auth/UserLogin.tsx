@@ -19,6 +19,7 @@ const validationSchema = Yup.object({
 });
 
 const UserLogin: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -39,6 +40,7 @@ const UserLogin: React.FC = () => {
 
   const handleSubmit = async (values: { email: string; password: string }) => {
     try {
+      setLoading(true);
       const response = await axios.post<LoginResponse>('/api/firebaseLogin', {
         email: values.email,
         password: values.password,
@@ -48,6 +50,7 @@ const UserLogin: React.FC = () => {
         router.push('/');
       }
     } catch (error) {
+      setLoading(false);
       if (axios.isAxiosError(error) && error.response) {
         const firebaseErrorCode = error.response.data.error;
 
@@ -75,6 +78,7 @@ const UserLogin: React.FC = () => {
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
         initialValues={{ email: '', password: '' }}
+        loading={loading}
       />
 
       <Snackbar

@@ -1,7 +1,14 @@
 'use client';
 
 import React from 'react';
-import { TextField, Button, Typography, Container, Box } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Box,
+  CircularProgress,
+} from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
@@ -12,6 +19,7 @@ interface AuthFormProps {
   title: string;
   icon: React.ReactNode;
   isRegister?: boolean;
+  loading: boolean;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({
@@ -21,6 +29,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   title,
   icon,
   isRegister = false,
+  loading,
 }) => {
   return (
     <Container
@@ -84,8 +93,9 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 variant="contained"
                 color="primary"
                 sx={{ mt: 2 }}
+                disabled={loading}
               >
-                {title}
+                {loading ? <CircularProgress size={24} /> : title}
               </Button>
             </Form>
           )}

@@ -22,6 +22,7 @@ const validationSchema = Yup.object({
 });
 
 const UserRegistration: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -43,6 +44,7 @@ const UserRegistration: React.FC = () => {
     confirmPassword: string;
   }) => {
     try {
+      setLoading(true);
       const response = await axios.post<RegisterResponse>(
         '/api/firebaseRegister',
         {
@@ -55,6 +57,7 @@ const UserRegistration: React.FC = () => {
         router.push('/');
       }
     } catch (error) {
+      setLoading(false);
       if (axios.isAxiosError(error) && error.response) {
         const firebaseErrorCode = error.response.data.error;
 
@@ -83,6 +86,7 @@ const UserRegistration: React.FC = () => {
         onSubmit={handleSubmit}
         title="Register"
         validationSchema={validationSchema}
+        loading={loading}
       />
 
       <Snackbar
