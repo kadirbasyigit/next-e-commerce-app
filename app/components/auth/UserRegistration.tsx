@@ -2,12 +2,12 @@
 
 import * as Yup from 'yup';
 import Lock from '@mui/icons-material/Lock';
-import { registerUser } from '@/app/firebase/auth';
 import AuthForm from './AuthForm';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Snackbar, Alert } from '@mui/material';
-import { FirebaseError } from 'firebase/app';
+import axios from 'axios';
+import { UserCredential } from 'firebase/auth';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -33,20 +33,33 @@ const UserRegistration: React.FC = () => {
     'auth/network-request-failed': 'Network error. Please try again later.',
   };
 
+  type RegisterResponse = {
+    user: UserCredential;
+  };
+
   const handleSubmit = async (values: {
     email: string;
     password: string;
     confirmPassword: string;
   }) => {
     try {
-      const user = await registerUser(values.email, values.password);
-      if (user) {
+      const response = await axios.post<RegisterResponse>(
+        '/api/firebaseRegister',
+        {
+          email: values.email,
+          password: values.password,
+        }
+      );
+
+      if (response.data.user) {
         router.push('/');
       }
     } catch (error) {
-      if (error instanceof FirebaseError) {
+      if (axios.isAxiosError(error) && error.response) {
+        const firebaseErrorCode = error.response.data.error;
+
         const errorMessage =
-          firebaseErrorMessages[error.code] ||
+          firebaseErrorMessages[firebaseErrorCode] ||
           'Registration failed. Please try again.';
         setSnackbarMessage(errorMessage);
       } else {
