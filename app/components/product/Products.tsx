@@ -29,9 +29,9 @@ const Products: React.FC = () => {
         },
       });
       setProducts(response.data.products);
+      setLoading(false);
     } catch (error) {
       setError('Failed to fetch products');
-    } finally {
       setLoading(false);
     }
   };
@@ -42,6 +42,7 @@ const Products: React.FC = () => {
   }, [currentPage]);
 
   const totalPages = Math.ceil(194 / itemsPerPage);
+
   if (loading) {
     return <CircularProgress />;
   }

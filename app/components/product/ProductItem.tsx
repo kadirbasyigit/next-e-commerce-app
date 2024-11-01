@@ -22,6 +22,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
         width={200}
         height={200}
         style={{ objectFit: 'cover' }}
+        priority
       />
       <Typography variant="h6">{product.title}</Typography>
       <Typography variant="body1">${product.price}</Typography>
