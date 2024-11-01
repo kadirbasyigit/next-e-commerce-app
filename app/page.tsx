@@ -1,5 +1,11 @@
-import Header from './components/UI/Header';
+import Products from './components/product/Products';
+import Header from './components/ui/Header';
 
 export default function Home() {
-  return <Header />;
+  return (
+    <>
+      <Header />
+      <Products />
+    </>
+  );
 }
