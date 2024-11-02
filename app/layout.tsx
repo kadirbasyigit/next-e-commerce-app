@@ -4,7 +4,8 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { Poppins } from 'next/font/google';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from '../theme';
-import ReduxProvider from './store/reduxProvider';
+import ReduxProvider from './providers/ReduxProvider';
+import PersistProvider from './providers/PersistProvider';
 
 export const metadata: Metadata = {
   title: 'E-commerce App',
@@ -26,12 +27,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppins.className}>
         <ReduxProvider>
-          <AppRouterCacheProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              {children}
-            </ThemeProvider>
-          </AppRouterCacheProvider>
+          <PersistProvider>
+            <AppRouterCacheProvider>
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
+                {children}
+              </ThemeProvider>
+            </AppRouterCacheProvider>
+          </PersistProvider>
         </ReduxProvider>
       </body>
     </html>
