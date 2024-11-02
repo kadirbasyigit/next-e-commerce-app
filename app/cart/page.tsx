@@ -1,11 +1,17 @@
 'use client';
 
-import { useAppSelector } from '@/app/store/store';
+import { useAppSelector, useAppDispatch } from '@/app/store/store';
 import { RootState } from '@/app/store/store';
 import { Paper, Typography, Button, Grid2 } from '@mui/material';
+import { removeFromCart } from '@/app/store/cartSlice';
 
 const Cart = () => {
+  const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state: RootState) => state.cart.items);
+
+  const handleRemove = (id: number) => {
+    dispatch(removeFromCart(id));
+  };
 
   return (
     <Grid2 container spacing={2} sx={{ padding: 2 }}>
@@ -17,7 +23,9 @@ const Cart = () => {
             <Paper elevation={3} sx={{ padding: 2 }}>
               <Typography variant="h6">{item.title}</Typography>
               <Typography variant="body1">${item.price}</Typography>
-              <Button variant="contained">Remove</Button>
+              <Button variant="contained" onClick={() => handleRemove(item.id)}>
+                Remove
+              </Button>
             </Paper>
           </Grid2>
         ))
