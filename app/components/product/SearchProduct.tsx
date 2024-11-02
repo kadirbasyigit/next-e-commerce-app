@@ -23,7 +23,11 @@ const Search: React.FC = () => {
     setError(null);
 
     try {
-      const response = await axios.get('https://dummyjson.com/products/');
+      const response = await axios.get('https://dummyjson.com/products/', {
+        params: {
+          limit: 0,
+        },
+      });
       const filteredResults = response.data.products.filter(
         (product: Product) =>
           product.tags.some(tag => tag.toLowerCase() === query.toLowerCase()) ||
