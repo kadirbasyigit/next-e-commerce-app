@@ -16,6 +16,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import CartIcon from '@/app/components/product/CartIcon';
 
 const Header: React.FC = () => {
   const theme = useTheme();
@@ -215,7 +216,7 @@ const Header: React.FC = () => {
             </Menu>
 
             <IconButton color="inherit" href="/cart" sx={{ mx: 2 }}>
-              <ShoppingCartIcon />
+              <CartIcon />
             </IconButton>
           </>
         )}
