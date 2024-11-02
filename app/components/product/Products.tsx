@@ -11,6 +11,9 @@ export type Product = {
   title: string;
   price: number;
   images: string[];
+  category: string;
+  tags: string[];
+  description: string;
 };
 
 const Products: React.FC = () => {
