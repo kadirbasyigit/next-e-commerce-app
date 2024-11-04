@@ -16,7 +16,11 @@ export type Product = {
   description: string;
 };
 
-const Products: React.FC = () => {
+type ProductsProps = {
+  searchQuery?: string;
+};
+
+const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,8 +31,7 @@ const Products: React.FC = () => {
     try {
       const response = await axios.get('https://dummyjson.com/products', {
         params: {
-          limit: itemsPerPage,
-          skip: (page - 1) * itemsPerPage,
+          limit: 0,
         },
       });
       setProducts(response.data.products);
@@ -40,11 +43,50 @@ const Products: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchProducts(currentPage);
+    if (!searchQuery) {
+      fetchProducts(currentPage);
+    } else {
+      searchProducts();
+    }
     window.scrollTo(0, 0);
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
 
-  const totalPages = Math.ceil(194 / itemsPerPage);
+  const searchProducts = async () => {
+    if (!searchQuery) return;
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.get('https://dummyjson.com/products', {
+        params: {
+          limit: 0,
+        },
+      });
+      const filteredResults = response.data.products.filter(
+        (product: Product) =>
+          product.tags.some(
+            tag => tag.toLowerCase() === searchQuery.toLowerCase()
+          ) ||
+          product.category.toLowerCase() === searchQuery.toLowerCase() ||
+          product.title
+            .toLowerCase()
+            .split(/\s+/)
+            .includes(searchQuery.toLowerCase()) ||
+          product.description
+            .toLowerCase()
+            .split(/\s+/)
+            .includes(searchQuery.toLowerCase())
+      );
+      setProducts(filteredResults);
+      setCurrentPage(1);
+    } catch (error) {
+      setError('Failed to fetch results');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   if (loading) {
     return <CircularProgress />;
@@ -54,19 +96,26 @@ const Products: React.FC = () => {
     return <Typography color="error">{error}</Typography>;
   }
 
+  const paginatedProducts = products.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <Container sx={{ mt: 4, mb: 4 }}>
       <Grid2 container spacing={2} justifyContent={'center'}>
-        {products.map(product => (
+        {paginatedProducts.map(product => (
           <ProductItem key={product.id} product={product} />
         ))}
       </Grid2>
-      <Pagination
-        count={totalPages}
-        page={currentPage}
-        onChange={(_, value) => setCurrentPage(value)}
-        sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}
-      />
+      {totalPages > 1 && (
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={(_, value) => setCurrentPage(value)}
+          sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}
+        />
+      )}
     </Container>
   );
 };
