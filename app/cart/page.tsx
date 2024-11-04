@@ -19,7 +19,7 @@ const Cart = () => {
         <Typography variant="h6">Your cart is empty.</Typography>
       ) : (
         cartItems.map(item => (
-          <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={item.id}>
             <Paper elevation={3} sx={{ padding: 2 }}>
               <Typography variant="h6">{item.title}</Typography>
               <Typography variant="body1">${item.price}</Typography>
