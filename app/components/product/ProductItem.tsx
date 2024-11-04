@@ -12,6 +12,7 @@ import {
   removeFromFavorites,
 } from '@/app/store/favoritesSlice';
 import { addToCart } from '@/app/store/cartSlice';
+import Link from '@/app/utils/Link';
 
 type ProductItemProps = {
   product: Product;
@@ -22,11 +23,11 @@ const ProductItem = ({ product }: ProductItemProps) => {
   const favorites = useAppSelector(state => state.favorites.favoriteItems);
   const isFavorite = favorites.some(fav => fav.id === product.id);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (event: React.MouseEvent) => {
     dispatch(addToCart(product));
   };
 
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = (event: React.MouseEvent) => {
     if (isFavorite) {
       dispatch(removeFromFavorites(product.id));
     } else {
@@ -50,15 +51,17 @@ const ProductItem = ({ product }: ProductItemProps) => {
       >
         {isFavorite ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
       </IconButton>
-      <Image
-        src={product.images[0]}
-        alt={product.title}
-        width={200}
-        height={200}
-        style={{ objectFit: 'cover' }}
-        priority
-      />
-      <Typography variant="h6">{product.title}</Typography>
+      <Link href={`/products/${product.id}`}>
+        <Image
+          src={product.images[0]}
+          alt={product.title}
+          width={200}
+          height={200}
+          style={{ objectFit: 'cover' }}
+          priority
+        />
+        <Typography variant="h6">{product.title}</Typography>
+      </Link>
       <Typography variant="body1">${product.price}</Typography>
       <Button variant="contained" onClick={handleAddToCart}>
         Add to Cart
