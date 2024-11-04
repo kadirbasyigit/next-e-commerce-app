@@ -2,9 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Container, Typography, CircularProgress, Grid2 } from '@mui/material';
+import {
+  Container,
+  Typography,
+  CircularProgress,
+  Grid2,
+  Box,
+  FormControlLabel,
+  Checkbox,
+  Pagination,
+} from '@mui/material';
 import ProductItem from './ProductItem';
-import Pagination from '@mui/material/Pagination';
 
 export type Product = {
   id: number;
@@ -22,19 +30,24 @@ type ProductsProps = {
 
 const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const itemsPerPage = 30;
 
-  const fetchProducts = async (page: number) => {
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
     try {
       const response = await axios.get('https://dummyjson.com/products', {
-        params: {
-          limit: 0,
-        },
+        params: { limit: 0 },
       });
       setProducts(response.data.products);
+      setFilteredProducts(response.data.products);
       setLoading(false);
     } catch (error) {
       setError('Failed to fetch products');
@@ -43,67 +56,74 @@ const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
   };
 
   useEffect(() => {
-    if (!searchQuery) {
-      fetchProducts(currentPage);
-    } else {
-      searchProducts();
-    }
-    window.scrollTo(0, 0);
-  }, [currentPage, searchQuery]);
-
-  const searchProducts = async () => {
-    if (!searchQuery) return;
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios.get('https://dummyjson.com/products', {
-        params: {
-          limit: 0,
-        },
-      });
-      const filteredResults = response.data.products.filter(
+    if (searchQuery) {
+      const filtered = products.filter(
         (product: Product) =>
           product.tags.some(
             tag => tag.toLowerCase() === searchQuery.toLowerCase()
           ) ||
           product.category.toLowerCase() === searchQuery.toLowerCase() ||
-          product.title
-            .toLowerCase()
-            .split(/\s+/)
-            .includes(searchQuery.toLowerCase()) ||
-          product.description
-            .toLowerCase()
-            .split(/\s+/)
-            .includes(searchQuery.toLowerCase())
+          product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setProducts(filteredResults);
-      setCurrentPage(1);
-    } catch (error) {
-      setError('Failed to fetch results');
-    } finally {
-      setLoading(false);
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products);
     }
+    setCurrentPage(1);
+  }, [searchQuery, products]);
+
+  useEffect(() => {
+    if (sortOrder) {
+      const sortedProducts = [...filteredProducts].sort((a, b) =>
+        sortOrder === 'asc' ? a.price - b.price : b.price - a.price
+      );
+      setFilteredProducts(sortedProducts);
+    }
+  }, [sortOrder]);
+
+  const handleSortChange = (order: 'asc' | 'desc') => {
+    setSortOrder(sortOrder === order ? null : order);
   };
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-
-  if (loading) {
-    return <CircularProgress />;
-  }
-
-  if (error) {
-    return <Typography color="error">{error}</Typography>;
-  }
-
-  const paginatedProducts = products.slice(
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  const handlePageChange = (e: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Typography color="error">{error}</Typography>;
+
   return (
     <Container sx={{ mt: 4, mb: 4 }}>
-      <Grid2 container spacing={2} justifyContent={'center'}>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h6">Price</Typography>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={sortOrder === 'asc'}
+              onChange={() => handleSortChange('asc')}
+            />
+          }
+          label="Low to High"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={sortOrder === 'desc'}
+              onChange={() => handleSortChange('desc')}
+            />
+          }
+          label="High to Low"
+        />
+      </Box>
+      <Grid2 container spacing={2} justifyContent="center">
         {paginatedProducts.map(product => (
           <ProductItem key={product.id} product={product} />
         ))}
@@ -112,7 +132,7 @@ const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
         <Pagination
           count={totalPages}
           page={currentPage}
-          onChange={(_, value) => setCurrentPage(value)}
+          onChange={handlePageChange}
           sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}
         />
       )}
