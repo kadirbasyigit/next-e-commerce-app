@@ -3,17 +3,23 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import cartReducer from './cartSlice';
+import favoritesReducer from './favoritesSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, cartReducer);
+const persistedCartReducer = persistReducer(persistConfig, cartReducer);
+const persistedFavoritesReducer = persistReducer(
+  persistConfig,
+  favoritesReducer
+);
 
 const store = configureStore({
   reducer: {
-    cart: persistedReducer,
+    cart: persistedCartReducer,
+    favorites: persistedFavoritesReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

@@ -1,10 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Paper, Typography, Button } from '@mui/material';
+import { Paper, Typography, Button, IconButton } from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Image from 'next/image';
 import { Product } from './Products';
-import { useAppDispatch } from '@/app/store/store';
+import { useAppDispatch, useAppSelector } from '@/app/store/store';
+import {
+  addToFavorites,
+  removeFromFavorites,
+} from '@/app/store/favoritesSlice';
 import { addToCart } from '@/app/store/cartSlice';
 
 type ProductItemProps = {
@@ -13,9 +19,19 @@ type ProductItemProps = {
 
 const ProductItem = ({ product }: ProductItemProps) => {
   const dispatch = useAppDispatch();
+  const favorites = useAppSelector(state => state.favorites.favoriteItems);
+  const isFavorite = favorites.some(fav => fav.id === product.id);
 
   const handleAddToCart = () => {
     dispatch(addToCart(product));
+  };
+
+  const handleToggleFavorite = () => {
+    if (isFavorite) {
+      dispatch(removeFromFavorites(product.id));
+    } else {
+      dispatch(addToFavorites(product));
+    }
   };
 
   return (
@@ -25,8 +41,15 @@ const ProductItem = ({ product }: ProductItemProps) => {
         textAlign: 'center',
         width: '252px',
         height: '378px',
+        position: 'relative',
       }}
     >
+      <IconButton
+        onClick={handleToggleFavorite}
+        sx={{ position: 'absolute', top: 8, right: 8 }}
+      >
+        {isFavorite ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+      </IconButton>
       <Image
         src={product.images[0]}
         alt={product.title}
