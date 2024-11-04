@@ -12,6 +12,7 @@ import {
   Checkbox,
   Pagination,
 } from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
 import ProductItem from './ProductItem';
 
 export type Product = {
@@ -22,6 +23,7 @@ export type Product = {
   category: string;
   tags: string[];
   description: string;
+  rating: number;
 };
 
 type ProductsProps = {
@@ -35,6 +37,7 @@ const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+  const [selectedRatings, setSelectedRatings] = useState<number[]>([]); // For rating filter
   const itemsPerPage = 30;
 
   useEffect(() => {
@@ -56,8 +59,10 @@ const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
   };
 
   useEffect(() => {
+    let filtered = products;
+
     if (searchQuery) {
-      const filtered = products.filter(
+      filtered = filtered.filter(
         (product: Product) =>
           product.tags.some(
             tag => tag.toLowerCase() === searchQuery.toLowerCase()
@@ -66,12 +71,21 @@ const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
           product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.description.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setFilteredProducts(filtered);
-    } else {
-      setFilteredProducts(products);
     }
+
+    if (selectedRatings.length > 0) {
+      filtered = filtered.filter(product => {
+        const rating = Math.floor(product.rating);
+        return (
+          selectedRatings.includes(rating) ||
+          (selectedRatings.includes(4) && rating >= 4)
+        );
+      });
+    }
+
+    setFilteredProducts(filtered);
     setCurrentPage(1);
-  }, [searchQuery, products]);
+  }, [searchQuery, products, selectedRatings]);
 
   useEffect(() => {
     if (sortOrder) {
@@ -84,6 +98,12 @@ const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
 
   const handleSortChange = (order: 'asc' | 'desc') => {
     setSortOrder(sortOrder === order ? null : order);
+  };
+
+  const handleRatingChange = (rating: number) => {
+    setSelectedRatings(prev =>
+      prev.includes(rating) ? prev.filter(r => r !== rating) : [...prev, rating]
+    );
   };
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
@@ -123,11 +143,55 @@ const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
           label="High to Low"
         />
       </Box>
+
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h6">Rating</Typography>
+        {[2, 3].map(rating => (
+          <FormControlLabel
+            key={rating}
+            control={
+              <Checkbox
+                checked={selectedRatings.includes(rating)}
+                onChange={() => handleRatingChange(rating)}
+              />
+            }
+            label={
+              <Box display="flex" alignItems="center">
+                <span>{rating}</span>{' '}
+                <StarIcon
+                  color="primary"
+                  sx={{ marginLeft: '2px', fontSize: '17px' }}
+                />
+              </Box>
+            }
+          />
+        ))}
+        <FormControlLabel
+          key={4}
+          control={
+            <Checkbox
+              checked={selectedRatings.includes(4)}
+              onChange={() => handleRatingChange(4)}
+            />
+          }
+          label={
+            <Box display="flex" alignItems="center">
+              <span>4+</span>{' '}
+              <StarIcon
+                color="primary"
+                sx={{ marginLeft: '2px', fontSize: '17px' }}
+              />
+            </Box>
+          }
+        />
+      </Box>
+
       <Grid2 container spacing={2} justifyContent="center">
         {paginatedProducts.map(product => (
           <ProductItem key={product.id} product={product} />
         ))}
       </Grid2>
+
       {totalPages > 1 && (
         <Pagination
           count={totalPages}
