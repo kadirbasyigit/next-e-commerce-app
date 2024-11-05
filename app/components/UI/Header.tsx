@@ -17,6 +17,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import Link from '@/app/utils/Link';
 import CartIcon from '@/app/components/product/CartIcon';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const Header: React.FC = () => {
   const theme = useTheme();
@@ -25,6 +27,7 @@ const Header: React.FC = () => {
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
     null
   );
+  const router = useRouter();
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -40,6 +43,17 @@ const Header: React.FC = () => {
 
   const handleProfileClose = () => {
     setProfileAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post('api/firebaseLogout');
+      if (response.status === 200) {
+        router.push('/login');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -96,6 +110,7 @@ const Header: React.FC = () => {
               <MenuItem onClick={handleProfileClose}>
                 <Link href="/register">Register</Link>
               </MenuItem>
+              {/* <MenuItem onClick={handleLogout}>Logout</MenuItem> */}
             </Menu>
           </>
         ) : (
@@ -144,6 +159,7 @@ const Header: React.FC = () => {
               <MenuItem onClick={handleProfileClose}>
                 <Link href="/register">Register</Link>
               </MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
 
             <Link href="/cart">
