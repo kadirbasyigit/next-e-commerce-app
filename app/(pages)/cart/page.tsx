@@ -34,6 +34,30 @@ const Cart = () => {
     dispatch(decreaseQuantity(id));
   };
 
+  const handleCheckout = async () => {
+    const items = cartItems.map(item => ({
+      title: item.title,
+      image: item.images[0],
+      price: item.price,
+      quantity: item.quantity,
+    }));
+
+    const response = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ items }),
+    });
+
+    if (response.ok) {
+      const { url } = await response.json();
+      window.location.href = url;
+    } else {
+      console.error('Error creating checkout session');
+    }
+  };
+
   return (
     <Grid2 container spacing={2} sx={{ padding: 2, justifyContent: 'center' }}>
       <Grid2
@@ -113,6 +137,7 @@ const Cart = () => {
               variant="contained"
               color="primary"
               sx={{ width: '50%', margin: 'auto' }}
+              onClick={handleCheckout}
             >
               Checkout
             </Button>

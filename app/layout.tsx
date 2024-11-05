@@ -6,6 +6,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from '../theme';
 import ReduxProvider from './providers/ReduxProvider';
 import PersistProvider from './providers/PersistProvider';
+import StripeProvider from './providers/StripeProvider';
 
 export const metadata: Metadata = {
   title: 'E-commerce App',
@@ -31,7 +32,7 @@ export default function RootLayout({
             <AppRouterCacheProvider>
               <ThemeProvider theme={theme}>
                 <CssBaseline />
-                {children}
+                <StripeProvider>{children}</StripeProvider>
               </ThemeProvider>
             </AppRouterCacheProvider>
           </PersistProvider>
