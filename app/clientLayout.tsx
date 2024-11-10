@@ -23,7 +23,7 @@ const ClientLayout = ({ children }: { children: React.ReactNode }) => {
     pathname === '/login' || pathname === '/register';
   return (
     <html lang="en">
-      <body className={poppins.className}>
+      <body suppressHydrationWarning className={poppins.className}>
         <ReduxProvider>
           <PersistProvider>
             <AppRouterCacheProvider>

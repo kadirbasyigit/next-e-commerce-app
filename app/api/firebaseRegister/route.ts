@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '../firebaseConfig/route';
+import { auth } from '@/app/lib/firebaseConfig';
 import { createUserWithEmailAndPassword, UserCredential } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 

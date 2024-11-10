@@ -1,8 +1,7 @@
 'use client';
 import { createTheme } from '@mui/material/styles';
-import { ThemeOptions } from '@mui/material/styles';
 
-export const themeOptions: ThemeOptions = {
+const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
@@ -11,13 +10,6 @@ export const themeOptions: ThemeOptions = {
     secondary: {
       main: '#ffffff',
     },
-  },
-};
-
-const theme = createTheme({
-  ...themeOptions,
-  typography: {
-    fontFamily: 'Poppins, sans-serif',
   },
 });
 
