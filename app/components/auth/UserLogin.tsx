@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import { UserCredential } from 'firebase/auth';
+import { setUser } from '@/app/store/userSlice';
+import { useAppDispatch } from '@/app/store/store';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -33,8 +35,10 @@ const UserLogin: React.FC = () => {
       'The provided credentials are invalid. Please check your email and password and try again.',
   };
 
+  const dispatch = useAppDispatch();
+
   type LoginResponse = {
-    user: UserCredential;
+    user: UserCredential['user'];
     error?: string;
   };
 
@@ -47,6 +51,8 @@ const UserLogin: React.FC = () => {
       });
 
       if (response.data.user) {
+        const { email, uid } = response.data.user;
+        dispatch(setUser({ email, userId: uid }));
         router.push('/');
       }
     } catch (error) {

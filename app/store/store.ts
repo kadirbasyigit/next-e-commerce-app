@@ -4,23 +4,18 @@ import storage from 'redux-persist/lib/storage';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import cartReducer from './cartSlice';
 import favoritesReducer from './favoritesSlice';
+import userReducer from './userSlice';
 
-const persistConfig = {
-  key: 'root',
-  storage,
+const persistConfig = { key: 'root', storage };
+
+const persistedReducers = {
+  cart: persistReducer(persistConfig, cartReducer),
+  favorites: persistReducer(persistConfig, favoritesReducer),
+  user: persistReducer(persistConfig, userReducer),
 };
 
-const persistedCartReducer = persistReducer(persistConfig, cartReducer);
-const persistedFavoritesReducer = persistReducer(
-  persistConfig,
-  favoritesReducer
-);
-
 const store = configureStore({
-  reducer: {
-    cart: persistedCartReducer,
-    favorites: persistedFavoritesReducer,
-  },
+  reducer: persistedReducers,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
