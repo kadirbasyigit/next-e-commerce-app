@@ -10,6 +10,8 @@ import axios from 'axios';
 import { UserCredential } from 'firebase/auth';
 import { setUser } from '@/app/store/userSlice';
 import { useAppDispatch } from '@/app/store/store';
+import { db } from '@/app/lib/firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -53,6 +55,9 @@ const UserLogin: React.FC = () => {
       if (response.data.user) {
         const { email, uid } = response.data.user;
         dispatch(setUser({ email, userId: uid }));
+        await setDoc(doc(db, 'customers', uid), {
+          email: email,
+        });
         router.push('/');
       }
     } catch (error) {

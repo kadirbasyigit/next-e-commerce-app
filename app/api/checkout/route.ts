@@ -7,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   try {
-    const { items } = await req.json();
+    const { items, userId } = await req.json();
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -25,6 +25,7 @@ export async function POST(req: Request) {
       mode: 'payment',
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
+      client_reference_id: userId,
     });
 
     return NextResponse.json({ url: session.url });

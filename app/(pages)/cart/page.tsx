@@ -21,6 +21,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 const Cart = () => {
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state: RootState) => state.cart.items);
+  const { userId } = useAppSelector(state => state.user);
 
   const handleRemove = (id: number) => {
     dispatch(removeFromCart(id));
@@ -47,7 +48,7 @@ const Cart = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ items }),
+      body: JSON.stringify({ items, userId }),
     });
 
     if (response.ok) {
