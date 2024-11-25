@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import {
   Container,
   Typography,
@@ -53,7 +53,11 @@ const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
       setFilteredProducts(response.data.products);
       setLoading(false);
     } catch (error) {
-      setError('Failed to fetch products');
+      if (error instanceof AxiosError) {
+        console.log('Axios error:', error.message);
+      } else {
+        setError('Failed to fetch products');
+      }
       setLoading(false);
     }
   };
@@ -94,7 +98,7 @@ const Products: React.FC<ProductsProps> = ({ searchQuery }) => {
       );
       setFilteredProducts(sortedProducts);
     }
-  }, [sortOrder]);
+  }, [sortOrder, filteredProducts]);
 
   const handleSortChange = (order: 'asc' | 'desc') => {
     setSortOrder(sortOrder === order ? null : order);

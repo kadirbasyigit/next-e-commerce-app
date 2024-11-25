@@ -1,13 +1,21 @@
 'use client';
 
 import * as Yup from 'yup';
+import { Formik, Form, Field } from 'formik';
 import Lock from '@mui/icons-material/Lock';
-import AuthForm from './AuthForm';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import { UserCredential } from 'firebase/auth';
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Box,
+  CircularProgress,
+} from '@mui/material';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -79,15 +87,76 @@ const UserRegistration: React.FC = () => {
 
   return (
     <>
-      <AuthForm
-        isRegister
-        icon={<Lock fontSize="large" />}
-        initialValues={{ email: '', password: '', confirmPassword: '' }}
-        onSubmit={handleSubmit}
-        title="Register"
-        validationSchema={validationSchema}
-        loading={loading}
-      />
+      <Container
+        maxWidth="xs"
+        sx={{
+          height: '100vh',
+          display: 'grid',
+          placeItems: 'center',
+        }}
+      >
+        <Box p={3} boxShadow={3} borderRadius={3}>
+          <Typography variant="h5" align="center" gutterBottom>
+            <Lock fontSize="large" />
+          </Typography>
+          <Formik
+            initialValues={{ email: '', password: '', confirmPassword: '' }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ errors, touched }) => (
+              <Form>
+                <Field
+                  as={TextField}
+                  fullWidth
+                  label="E-mail"
+                  name="email"
+                  variant="outlined"
+                  margin="normal"
+                  error={touched.email && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                />
+                <Field
+                  as={TextField}
+                  fullWidth
+                  label="Password"
+                  name="password"
+                  type="password"
+                  variant="outlined"
+                  margin="normal"
+                  error={touched.password && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                />
+
+                <Field
+                  as={TextField}
+                  fullWidth
+                  label="Confirm Password"
+                  name="confirmPassword"
+                  type="password"
+                  variant="outlined"
+                  margin="normal"
+                  error={
+                    touched.confirmPassword && Boolean(errors.confirmPassword)
+                  }
+                  helperText={touched.confirmPassword && errors.confirmPassword}
+                />
+
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                  disabled={loading}
+                >
+                  {loading ? <CircularProgress size={24} /> : 'Register'}
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      </Container>
 
       <Snackbar
         open={snackbarOpen}

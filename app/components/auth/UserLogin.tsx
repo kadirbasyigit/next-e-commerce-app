@@ -2,7 +2,6 @@
 
 import * as Yup from 'yup';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import AuthForm from './AuthForm';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Snackbar, Alert } from '@mui/material';
@@ -12,6 +11,15 @@ import { setUser } from '@/app/store/userSlice';
 import { useAppDispatch } from '@/app/store/store';
 import { db } from '@/app/lib/firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
+import { Formik, Form, Field } from 'formik';
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Box,
+  CircularProgress,
+} from '@mui/material';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -83,14 +91,61 @@ const UserLogin: React.FC = () => {
 
   return (
     <>
-      <AuthForm
-        icon={<LockOpenIcon fontSize="large" />}
-        title="Login"
-        onSubmit={handleSubmit}
-        validationSchema={validationSchema}
-        initialValues={{ email: '', password: '' }}
-        loading={loading}
-      />
+      <Container
+        maxWidth="xs"
+        sx={{
+          height: '100vh',
+          display: 'grid',
+          placeItems: 'center',
+        }}
+      >
+        <Box p={3} boxShadow={3} borderRadius={3}>
+          <Typography variant="h5" align="center" gutterBottom>
+            <LockOpenIcon fontSize="large" />
+          </Typography>
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ errors, touched }) => (
+              <Form>
+                <Field
+                  as={TextField}
+                  fullWidth
+                  label="E-mail"
+                  name="email"
+                  variant="outlined"
+                  margin="normal"
+                  error={touched.email && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                />
+                <Field
+                  as={TextField}
+                  fullWidth
+                  label="Password"
+                  name="password"
+                  type="password"
+                  variant="outlined"
+                  margin="normal"
+                  error={touched.password && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                  disabled={loading}
+                >
+                  {loading ? <CircularProgress size={24} /> : 'Login'}
+                </Button>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      </Container>
 
       <Snackbar
         open={snackbarOpen}

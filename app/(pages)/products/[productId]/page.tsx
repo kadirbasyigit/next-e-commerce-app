@@ -1,4 +1,5 @@
 import { Product } from '@/app/components/product/Products';
+import Image from 'next/image';
 
 export const generateStaticParams = async () => {
   const response = await fetch('https://dummyjson.com/products');
@@ -21,7 +22,7 @@ const ProductId = async ({ params }: { params: { productId: string } }) => {
       <h3>{product.title}</h3>
       <p>{product.description}</p>
       <p>Price: ${product.price}</p>
-      <img src={product.images[0]} alt={product.title} width={300} />
+      <Image src={product.images[0]} alt={product.title} width={300} />
     </div>
   );
 };

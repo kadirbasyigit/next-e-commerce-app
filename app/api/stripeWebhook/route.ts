@@ -22,20 +22,34 @@ export async function POST(req: Request) {
   }
 
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
+    const session = await stripe.checkout.sessions.retrieve(
+      event.data.object.id as string,
+      {
+        expand: ['line_items.data.price.product'],
+      }
+    );
 
     try {
       const lineItems = session.line_items?.data || [];
-      const amountTotal = session.amount_total ?? 0;
 
       const orderData = {
         userId: session.client_reference_id,
-        items: lineItems.map((item: any) => ({
-          name: item.name,
-          quantity: item.quantity,
-          price: item.amount_total / 100,
-        })),
-        totalAmount: amountTotal / 100,
+        items: lineItems.map((item: Stripe.LineItem) => {
+          let productName = 'Unknown';
+
+          if (item.price?.product && typeof item.price.product !== 'string') {
+            if (!('deleted' in item.price.product)) {
+              productName = item.price.product.name;
+            }
+          }
+
+          return {
+            name: productName,
+            quantity: item.quantity ?? 0,
+            price: (item.price?.unit_amount || 0) / 100,
+          };
+        }),
+        totalAmount: (session.amount_total ?? 0) / 100,
         status: session.payment_status,
         createdAt: new Date(),
       };

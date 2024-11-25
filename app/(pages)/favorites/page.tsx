@@ -19,7 +19,7 @@ const Favorites = () => {
     <Grid2 container spacing={2} sx={{ padding: 2 }}>
       {favItems.length === 0 ? (
         <Typography variant="h6">
-          You didn't have any favorite products.
+          You didn&apos;t have any favorite products.
         </Typography>
       ) : (
         favItems.map(item => (

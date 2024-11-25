@@ -1,12 +1,12 @@
 import NextLink from 'next/link';
 import { ReactNode } from 'react';
+import { LinkProps as NextLinkProps } from 'next/dist/client/link';
 
-interface LinkProps {
+type LinkProps = NextLinkProps & {
   children: ReactNode;
   href: string;
   passHref?: boolean;
-  [key: string]: any;
-}
+};
 
 const Link = ({ children, href, passHref = false, ...props }: LinkProps) => {
   return (

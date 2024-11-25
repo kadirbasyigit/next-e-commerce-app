@@ -23,11 +23,11 @@ const ProductItem = ({ product }: ProductItemProps) => {
   const favorites = useAppSelector(state => state.favorites.favoriteItems);
   const isFavorite = favorites.some(fav => fav.id === product.id);
 
-  const handleAddToCart = (event: React.MouseEvent) => {
+  const handleAddToCart = () => {
     dispatch(addToCart(product));
   };
 
-  const handleToggleFavorite = (event: React.MouseEvent) => {
+  const handleToggleFavorite = () => {
     if (isFavorite) {
       dispatch(removeFromFavorites(product.id));
     } else {
