@@ -8,7 +8,7 @@ import theme from '../theme';
 import ReduxProvider from './providers/ReduxProvider';
 import PersistProvider from './providers/PersistProvider';
 import StripeProvider from './providers/StripeProvider';
-import Header from './components/ui/Header';
+import Header from './components/UI/Header';
 import { usePathname } from 'next/navigation';
 
 const poppins = Poppins({

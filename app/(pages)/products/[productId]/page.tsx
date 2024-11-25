@@ -22,7 +22,12 @@ const ProductId = async ({ params }: { params: { productId: string } }) => {
       <h3>{product.title}</h3>
       <p>{product.description}</p>
       <p>Price: ${product.price}</p>
-      <Image src={product.images[0]} alt={product.title} width={300} />
+      <Image
+        src={product.images[0]}
+        alt={product.title}
+        width={300}
+        height={300}
+      />
     </div>
   );
 };
